@@ -1,0 +1,41 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="{{ LANGUAGE_CODE }}" xml:lang="{{ LANGUAGE_CODE }}" {% if LANGUAGE_BIDI %}dir="rtl"{% endif %}>
+<head>
+<title>{% block title %}SIGPLAN Award Nomination System{% endblock %}</title>
+<link rel="stylesheet" type="text/css" href="{% block stylesheet %} /static/css/base.css{% endblock %}" />
+</head>
+
+<body id="pid-front" class="front not-logged-in page-front no-sidebars panels layout-first-main sidebars-split font-size-13 grid-type-fluid grid-width-16 fluid-95 white blue-accents blue-footer default-headers blue-links round-corners-11">
+  <div id="page" class="page white-page-bg">
+    <div id="page-inner" class="page-inner">
+      <div id="header-group-wrapper" class="header-group-wrapper full-width">
+        <div id="header-group" class="header-group row grid16-16">
+          <div id="header-group-inner" class="header-group-inner inner clearfix">
+            <div id="header-site-info" class="header-site-info block ">
+              <div class="header-site-info-inner inner" id="header-site-info-inner">
+                <div id="logo">
+                  <a title="Home" href="/"><img alt="Home" src="/static/images/mix_and_match_favicon.gif"></a>
+                </div>
+                <div id="site-name"><a title="Home" href="/">SIGPLAN</a></div>
+                <div id="slogan">To explore programming language concepts and tools focusing on design, implementation and efficient use.</div>
+            </div>
+            
+            <div class="primary-menu block" id="primary-menu">
+              <div class="primary-menu-inner inner clearfix" id="primary-menu-inner">
+                <ul class="menu sf-menu"><li class="leaf first active-trail"><a class="active" title="Link to the front page." href="/">Home</a></li>
+                  <li class="leaf"><a title="Nominate" href="/nominate/">Nominate</a></li>
+                </ul></div><!-- /primary-menu-inner -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+{% block content %}
+{% endblock %}
+</body>
+</html>
+
