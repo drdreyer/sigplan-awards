@@ -19,9 +19,9 @@ urlpatterns = patterns('',
     (r'^accounts/profile/', profile),
     (r'^accounts/login/$', 'django.contrib.auth.views.login'),
     (r'^accounts/password/reset/$', 'django.contrib.auth.views.password_reset', {'template_name': 'registration/passwordd_reset_form.html'}),
-    (r'^accounts/password/reset/done/$', 'django.contrib.auth.views.password_reset_done'),
-    (r'^accounts/password/reset/(?P<uidb36>[0-9A-Za-z]+)-(?P<token>.+)/$', 'django.contrib.auth.views.password_reset_confirm'),
-    (r'^accounts/password/reset/complete/$', 'django.contrib.auth.views.password_reset_complete'),
+    (r'^accounts/password/reset/done/$', 'django.contrib.auth.views.password_reset_done', {'template_name': 'registration/passwordd_reset_done.html'}),
+    (r'^accounts/password/reset/(?P<uidb36>[0-9A-Za-z]+)-(?P<token>.+)/$', 'django.contrib.auth.views.password_reset_confirm', {'template_name': 'registration/passwordd_reset_confirm.html'}),
+    (r'^accounts/password/reset/complete/$', 'django.contrib.auth.views.password_reset_complete', {'template_name': 'registration/passwordd_reset_complete.html'}),
     
     # Examples:
     # url(r'^$', 'awards.sigplan.views.home', name='home'),
