@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Add Members to {{ award.name }} Committee</h1>
+
+<form method="post">
+  {% csrf_token %}
+  <table>
+    {{ form.as_table }}
+  </table>
+  <input type="submit" value="Update" />
+</form>
+
+
+<h2>Current Members</h2>
+<table>
+  <tr><th>Name</th><th>Email</th><th>Status</th></tr>
+{% for czar in czars %}
+  <tr><td>{{ czar.user.get_full_name }}</td><td>{{ czar.user.email }}</td><td>Czar</td></tr>
+{% endfor %}
+{% for member in members %}
+  <tr><td>{{ member.user.get_full_name }}</td><td>{{ member.user.email }}</td><td>Active</td></tr>
+{% endfor %}
+{% for pending in pendings %}
+  <tr><td>{{ pending.name }}</td><td>{{ pending.email }}</td><td>Pending</td></tr>
+{% endfor %}
+</table>
+
+{% endblock %}

@@ -1,0 +1,13 @@
+Dear {{ supporter.title }} {{ supporter.name }},
+
+{{ candidate.name }} has been nominated for ACM SIGPLAN's {{ award.name }}.  More details of the award can be found at {{ award.link }} .
+
+You have been named as someone who is willing to support this nomination.   200 to 500 words expressing your support would be sufficient, although longer statements of support are of course welcome.  It would help the award process if you could provide your statement of support by mid-February.
+
+Please go to {{ site_name }}/support_letter/{{ supporter.web_key }} to submit your letter of support, or to indicate that you are not able to provide one.
+This web page allows you to paste a few paragraphs of text.  
+
+If you have questions about the award process, please contact me at {{ award.email }}.  Thank you for supporting the SIGPLAN Awards process in this way.
+
+{{ czar.user.get_full_name }},   
+for the ACM SIGPLAN Executive Committee

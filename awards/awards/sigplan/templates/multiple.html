@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>You are a member of multiple Committees which do you want to view?</h1>
+
+<ul>
+  {% for czar in czars %}
+    <li><a href="{% url sigplan.views.award_member czar.award.id %}">{{ czar.award.name }}</a> -- Czar</li>
+  {% endfor %}
+  {% for member in members %}
+    <li><a href="{% url sigplan.views.award_member member.award.id %}">{{ member.award.name }}</a> -- Committee</li>
+  {% endfor %}
+</ul>
+
+
+{% endblock %}

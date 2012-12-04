@@ -2381,7 +2381,7 @@ a:hover, a:focus, a:active {
     margin: 0;
     padding: 0;
 }
-.grid-type-960 .page {
+.page {
     width: 960px;
 }
 .primary-menu {
@@ -2450,6 +2450,7 @@ a:hover, a:focus, a:active {
 }
 #main {
     padding-top: 5px;
+    max-width: 95%;
 }
 #postscript-bottom {
     padding-bottom: 5px;
@@ -3868,4 +3869,12 @@ form input.form-submit {
 #block-user-0 .item-list ul li {
     list-style-image: none;
     list-style-type: none;
+}
+
+pre {
+ white-space: pre-wrap;       /* css-3 */
+ white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */
+ white-space: -pre-wrap;      /* Opera 4-6 */
+ white-space: -o-pre-wrap;    /* Opera 7 */
+ word-wrap: break-word;       /* Internet Explorer 5.5+ */
 }

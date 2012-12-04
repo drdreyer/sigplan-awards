@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Welcome to the SigPlan Awards Nomination Portal</h1>
+If you are not <b>{{ pending.name }}</b> you have received this message in error.  
+Please notify <a href="mailto:{{ help_email }}">{{ help_email }}</a>.
+
+<hr/>
+<h1>You have been invited to the Selection Committee for the {{ pending.award.name }}</h1>
+Please fill in this form to activate your new account.  
+Or <a href="/accounts/login/?next=/activate_committee_member/{{ pending.web_key }}/">login</a> if you already have an account.
+
+<form method="post">
+  {% csrf_token %}
+  <table>
+    {{ form.as_table }}
+  </table>
+  <input type="submit" value="Create Account" />
+</form>
+
+
+{% endblock %}

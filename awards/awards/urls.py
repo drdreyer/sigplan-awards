@@ -10,10 +10,12 @@ urlpatterns = patterns('',
     (r'^$', index),
     
     (r'^nominate/', nominate),
-    (r'^czar/', czar),
-#    (r'^accounts/login/', account_login),
-#    (r'^accounts/login/$', 'django.contrib.auth.views.login', {'template_name': 'login.html'}),
-#    (r'^accounts/logout/', account_logout),
+    (r'^edit_award/(?P<award_id>\w+)/$', edit_award),
+    (r'^add_committee_member/(?P<award_id>\w+)/$', add_committee_member),
+    (r'^award_member/(?P<award_id>\w+)/$', award_member),
+    (r'^activate_committee_member/(?P<web_key>\w+)/$', activate_committee_member),
+    
+    
     (r'^accounts/authentication/$', sigplan_authenticate),
     (r'^accounts/logout/$', 'django.contrib.auth.views.logout', {'template_name': 'registration/logout.html'}),
     (r'^accounts/profile/', profile),

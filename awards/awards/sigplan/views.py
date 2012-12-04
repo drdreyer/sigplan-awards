@@ -12,8 +12,10 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.contrib.sites.models import Site
+from django.core.mail import send_mail
 from django.http import HttpResponse, HttpResponseServerError, HttpResponseForbidden, HttpResponseRedirect, Http404
 from django.shortcuts import render_to_response, get_object_or_404, render
+from django.template.loader import render_to_string
 from django.template import Context, loader, RequestContext
 from django.views.decorators.http import require_POST
 
@@ -21,9 +23,186 @@ from django.views.decorators.http import require_POST
 from forms import *
 
 def index(request):
+    if request.user.is_authenticated():
+        czars = Czar.objects.filter(user__exact=request.user)
+        members = CommitteeMember.objects.filter(user__exact=request.user)
+        
+        num_committees = len(czars) + len(members)
+        if num_committees > 1:
+            return multiple_committees(request, czars, members)
+        
+        if num_committees == 1:
+            if len(czars) == 1:
+                return czar_index(request, czars[0])
+            if len(members) == 1:
+                return committee_index(request, members[0])
+        
     return render(request, 'index.html')
 
+@login_required
+def multiple_committees(request, czars, members):
+    return render(request, 'multiple.html', {
+        'czars':czars,
+        'members':members,                                  
+        })
 
+
+@login_required
+def award_member(request, award_id):
+    try:
+        czar = Czar.objects.get(user__exact=request.user, award__id=award_id)
+        return czar_index(request, czar)
+    except:
+        pass
+    
+    try:
+        member = CommitteeMember.objects.get(user__exact=request.user, award__id=award_id)
+        return committee_index(request, member)
+    except:
+        pass
+    
+    raise Http404
+    
+@login_required
+def czar_index(request, czar):
+    if czar.user == request.user:
+        return committee_index_helper(request, czar, 'czar.html')
+    raise Http404
+    
+@login_required
+def committee_index(request, member):
+    if member.user == request.user:
+        return committee_index_helper(request, member, 'committee.html')
+    raise Http404
+    
+def committee_index_helper(request, member, template):
+    award = member.award
+    czars = Czar.objects.filter(award=award)
+    members = CommitteeMember.objects.filter(award=award)
+    pendings = PendingCommitteeMember.objects.filter(award=award)
+
+    return render(request, template, { 
+        'request':request,
+        'award':award,
+        'czars':czars,
+        'members':members,
+        'pendings':pendings,
+        })
+    
+@login_required
+def edit_award(request, award_id):
+    czar = Czar.objects.get(user__exact=request.user)
+    award = Award.objects.get(id=award_id)
+
+    if czar.award == award:
+        if request.method == 'POST': # If the form has been submitted...
+            form = AwardForm(request.POST, instance=award) # A form bound to the POST data
+            if form.is_valid(): # All validation rules pass
+                # Process the data in form.cleaned_data
+                # ...
+                form.save();
+                return HttpResponseRedirect('/') # Redirect after POST
+        else:
+            form = AwardForm(instance=award) # An unbound form
+
+        return render_to_response('edit_award.html', { 
+            'request':request,
+            'award':award,
+            'form':form,
+            },context_instance=RequestContext(request))
+        return HttpResponse("Edit Award %s" % award)
+        
+    raise Http404
+
+@login_required
+def add_committee_member(request, award_id):
+    czar = Czar.objects.get(user__exact=request.user)
+    award = Award.objects.get(id=award_id)
+
+    if czar.award == award:
+        if request.method == 'POST': # If the form has been submitted...
+            form = PendingCommitteeMemberForm(request.POST) # A form bound to the POST data
+            form.instance.award = award
+            if form.is_valid(): # All validation rules pass
+                # Process the data in form.cleaned_data
+                # ...
+                form.save();
+                email_pending_member(czar, form.instance)
+                form = PendingCommitteeMemberForm();
+        else:
+            form = PendingCommitteeMemberForm() # An unbound form
+
+        czars = Czar.objects.filter(award=award)
+        members = CommitteeMember.objects.filter(award=award)
+        pendings = PendingCommitteeMember.objects.filter(award=award)
+
+        print pendings
+
+        return render_to_response('add_committee_member.html', { 
+            'request':request,
+            'award':award,
+            'form':form,
+            'czars':czars,
+            'members':members,
+            'pendings':pendings,
+            },context_instance=RequestContext(request))
+        
+    raise Http404
+
+def activate_committee_member(request, web_key):
+    try:
+        pending = PendingCommitteeMember.objects.get(web_key=web_key)
+        
+        if request.user.is_authenticated():
+            CommitteeMember.objects.create(user=request.user,award=pending.award)
+            pending.delete()
+            return HttpResponseRedirect('/')
+        
+        if request.method == 'POST': # If the form has been submitted...
+            form = ActivateCommitteeMemberForm(request.POST) # A form bound to the POST data
+            
+#            form.instance.award = award
+            if form.is_valid(): # All validation rules pass
+                user = User.objects.create_user(
+                                username=form.cleaned_data['username'], 
+                                email=form.cleaned_data['email'], 
+                                password=form.cleaned_data['password'])
+                user.first_name = form.cleaned_data['first_name']
+                user.last_name = form.cleaned_data['last_name']
+                user.save()
+                user = authenticate(username=form.cleaned_data['username'], 
+                            password=form.cleaned_data['password'])
+                login(request, user)
+                CommitteeMember.objects.create(user=user,award=pending.award)
+                pending.delete()
+                
+                return HttpResponseRedirect('/')
+        else:
+            (first_name,foo,last_name) = pending.name.partition(' ')
+            form = ActivateCommitteeMemberForm(initial={
+                    'first_name': first_name,
+                    'last_name': last_name,
+                    'email': pending.email,
+                    })
+        
+        return render_to_response('activate_committee_member.html', { 
+                'form':form,
+                'pending':pending,
+                'help_email': pending.award.email,
+            },context_instance=RequestContext(request))
+        
+    except PendingCommitteeMember.DoesNotExist:
+        raise Http404
+
+def email_pending_member(czar, pending):
+    message = render_to_string('new_committee_member_email.txt',
+                                       { 'pcm': pending,
+                                         'award': czar.award,
+                                         'czar': czar, 
+                                        })
+    send_mail('Welcome to the '+pending.award+' awards committee.', message, czar.award.email_title+'<'+czar.award.email+'>',
+        [pending.name+'<'+pending.email+'>'], fail_silently=False)
+    
     
 def sigplan_authenticate(request):
     form = AuthenticationForm()
@@ -54,7 +233,6 @@ def sigplan_authenticate(request):
     return render_to_response('registration/login.html', 
                               context,
                               context_instance=RequestContext(request))
-
 def profile(request):
     return HttpResponse("Profile")
 
@@ -71,9 +249,4 @@ def nominate(request):
     return render(request, 'nominate.html', {
 #        'form': form,
     })
-    
-def czar(request):
-    return render(request, 'czar.html', {
-#        'form': form,
-    })
-    
+        

@@ -7,7 +7,10 @@ import sha
 
 class Award(models.Model):
     name = models.CharField(max_length=200)
-    email = models.EmailField(max_length=200)  
+    link = models.CharField(max_length=500, blank=True, null=True, verbose_name='Award Description Link')
+    email_title = models.CharField(max_length=500, default=settings.DEFAULT_FROM_EMAIL_NAME, blank=True, null=True, verbose_name='From Email Name')
+    email = models.EmailField(max_length=200, default=settings.DEFAULT_FROM_EMAIL_ONLY, verbose_name='From Email Address')  
+    award_text = models.TextField(blank=True, null=True)  
 
     def __unicode__(self):
         return self.name
@@ -22,6 +25,25 @@ class CommitteeMember(models.Model):
     user = models.ForeignKey(auth_models.User)
     award = models.ForeignKey(Award)
     created_date = models.DateTimeField('Created', auto_now_add=True)
+    
+    def __unicode__(self):
+        return self.user.get_full_name()
+    
+    
+class PendingCommitteeMember(models.Model):
+    name = models.CharField(max_length=200)
+    email = models.EmailField(max_length=200)  
+    award = models.ForeignKey(Award)
+    created_date = models.DateTimeField('Created', auto_now_add=True)
+    web_key = models.CharField(max_length=40, blank=True) # magic link
+    
+    def __unicode__(self):
+        return self.name
+    
+    def save(self, *args, **kwargs):
+        if not self.web_key:
+            self.web_key = sha.new(settings.SECRET_HASH+self.email+str(random.random())).hexdigest()
+        super(PendingCommitteeMember, self).save(*args, **kwargs)
     
 class Nominator(models.Model):
     name = models.CharField(max_length=200)  

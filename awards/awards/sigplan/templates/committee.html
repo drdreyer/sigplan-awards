@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Welcome {{ request.user.get_full_name }}</h1>
+{% block welcome_title %}<h2>You are a Committee Member of the {{ award.name }}.</h2>{% endblock %}
+
+<p><pre>{{ award.award_text }}</pre></p>
+
+{% block edit_award %}{% endblock %}
+
+<hr/>
+<h2>Committee Members</h2>
+<ul>
+  {% for czar in czars %}
+    <li>{{ czar.user.get_full_name }} ({{ czar.user.email }}) -- Czar</li>
+  {% endfor %}
+  {% for member in members %}
+    <li>{{ member.user.get_full_name }} ({{ member.user.email }}) -- Active</li>
+  {% endfor %}
+  {% for pending in pendings %}
+    <li>{{ pending.name }} ({{ pending.email }}) -- Pending</li>
+  {% endfor %}
+</ul>
+{% block add_committee_member %}{% endblock %}
+
+{% endblock %}

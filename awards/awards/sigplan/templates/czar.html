@@ -1,0 +1,11 @@
+{% extends "committee.html" %}
+
+{% block welcome_title %}<h2>You are the Awards Czar of the {{ award.name }}.</h2>{% endblock %}
+
+{% block edit_award %}
+<h3><a href="{% url sigplan.views.edit_award award.id %}">Edit Award Details</a>
+{% endblock %}
+
+{% block add_committee_member %}
+<h3><a href="{% url sigplan.views.add_committee_member award.id %}">Add Committee Member</a>
+{% endblock %}
