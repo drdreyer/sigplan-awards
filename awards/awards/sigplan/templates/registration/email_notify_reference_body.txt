@@ -1,0 +1,18 @@
+Dear Colleague,
+  This is a message from the faculty at The Max Planck Institute for Software Systems.  
+http://mpi-sws.org/
+  
+{{ applicant_name }} is applying {{ applicant_type }} at our institute, and has named you as a reference.  
+
+Our evaluation process depends on input from references like you. We appreciate the time and effort you spend preparing this letter.
+
+At your convenience, please upload your reference letter (pdf only) at:
+http://{{ site }}/reference/{{ activation_key }}/?reference=true
+
+Please respond by {{ deadline }}.
+{% if has_account %}
+You may also log into your account here: 
+http://{{ site }}/
+{% endif %}
+Thank you!
+

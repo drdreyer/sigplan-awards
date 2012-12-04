@@ -1,0 +1,5 @@
+  You received this email because you submitted your address to the Max Planck Institute for Software Systems Application System.  Please click the following link to register your email address with our system.
+
+http://{{ site }}/accounts/activate/{{ activation_key }}/
+
+After you click on the link you may create a new account or register this address with an existing account.

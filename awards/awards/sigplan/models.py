@@ -7,6 +7,7 @@ import sha
 
 class Award(models.Model):
     name = models.CharField(max_length=200)
+    email = models.EmailField(max_length=200)  
 
     def __unicode__(self):
         return self.name
@@ -26,7 +27,7 @@ class Nominator(models.Model):
     name = models.CharField(max_length=200)  
     affiliation = models.CharField(max_length=200)  
     phone = models.CharField(max_length=200)  
-    email = models.CharField(max_length=200)  
+    email = models.EmailField(max_length=200)  
     verified = models.BooleanField(default=False) # if the email address has been properly responded to
     web_key = models.CharField(max_length=40, blank=True) # magic link
     created_date = models.DateTimeField('Created', auto_now_add=True)
@@ -42,7 +43,7 @@ class Candidate(models.Model):
     nominator = models.ForeignKey(Nominator)
     affiliation = models.CharField(max_length=200)  
     phone = models.CharField(max_length=200)  
-    email = models.CharField(max_length=200)  
+    email = models.EmailField(max_length=200)  
     statement = models.TextField(editable=False)
     created_date = models.DateTimeField('Created', auto_now_add=True)
     
@@ -50,7 +51,7 @@ class Supporter(models.Model):
     candidate = models.ForeignKey(Candidate)
     name = models.CharField(max_length=200)  
     title = models.CharField(max_length=100) # Mr. Dr. Etc  
-    email = models.CharField(max_length=200)  
+    email = models.EmailField(max_length=200)  
     statement = models.TextField(editable=False, blank=True)
     web_key = models.CharField(max_length=40, blank=True) # magic link
     created_date = models.DateTimeField('Created', auto_now_add=True)

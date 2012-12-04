@@ -1,0 +1,17 @@
+{% extends "core/base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Registration Complete" %}{% endblock %}
+
+{% block content %}
+<h1>Confirm Email</h1><br/>
+<div id="info">
+  <h2>Account Activation</h2>
+  <p/>Step 1: Submit your email address
+  <p/><b>Step 2: Confirm by clicking the link in your email</b>
+  <p/>Step 3: Log In or Create Account<br/>
+  
+A confirmation email has been sent to:
+<h2>{{ email }}</h2>
+</div>
+{% endblock %}

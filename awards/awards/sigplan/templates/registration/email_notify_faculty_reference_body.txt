@@ -1,0 +1,28 @@
+Dear {{ reference_name }},
+
+{{ applicant_name }} is applying for a faculty position at the Max Planck Institute for Software Systems.
+
+The faculty search committee has reviewed the application and has decided to seek letters of reference. The applicant listed your name as a reference. 
+
+We would very much appreciate your detailed assessment of the candidate's capabilities and qualifications for this position. You can find more information about our faculty positions at: http://www.mpi-sws.org/index.php?n=careers/tenure-track
+
+Our evaluation process depends crucially on candid and confidential input from colleagues like you. We fully recognize the demands on your time such a request makes, and we thank you in advance for your help in this important matter.
+
+Please upload your reference letter (pdf only) at the following link:
+http://{{ site }}/reference/{{ activation_key }}/?reference=true
+{% if has_account %}
+You may also log into your account here: 
+http://{{ site }}/
+{% endif %}
+We plan to begin our next round of evaluation as soon as we receive the letters, but no later than {{ deadline }}. 
+
+If you have any questions about this process or difficulties uploading your letter, please contact us at: faculty-search@mpi-sws.org. 
+
+Sincerely,
+
+Chair, Faculty Search Committee
+Max Planck Institute for Software Systems
+Kaiseslautern / Saarbruecken
+Germany
+URL: http://www.mpi-sws.org
+
