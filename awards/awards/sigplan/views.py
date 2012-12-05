@@ -116,8 +116,8 @@ def edit_award(request, award_id):
 
 @login_required
 def add_committee_member(request, award_id):
-    czar = Czar.objects.get(user__exact=request.user)
     award = Award.objects.get(id=award_id)
+    czar = Czar.objects.get(user__exact=request.user, award=award)
 
     if czar.award == award:
         if request.method == 'POST': # If the form has been submitted...
