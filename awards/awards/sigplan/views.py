@@ -91,8 +91,8 @@ def committee_index_helper(request, member, template):
     
 @login_required
 def edit_award(request, award_id):
-    czar = Czar.objects.get(user__exact=request.user)
     award = Award.objects.get(id=award_id)
+    czar = Czar.objects.get(user__exact=request.user, award=award)
 
     if czar.award == award:
         if request.method == 'POST': # If the form has been submitted...
