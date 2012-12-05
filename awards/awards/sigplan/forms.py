@@ -8,15 +8,37 @@ class NominatorForm(forms.ModelForm):
         model = Nominator
         exclude = ('verified','web_key','created_date',)
         
+        widgets = {
+            'name': forms.TextInput(attrs={'size':'70'}),
+            'affiliation': forms.TextInput(attrs={'size':'70'}),
+            'email': forms.TextInput(attrs={'size':'70'}),
+            'phone': forms.TextInput(attrs={'size':'70'}),
+            'award_text': forms.Textarea(attrs={'rows':20, 'cols':70}),
+        }
+        
 class CandidateForm(forms.ModelForm):
     class Meta:
         model = Candidate
         exclude = ('nominator','created_date',)
         
+        widgets = {
+            'name': forms.TextInput(attrs={'size':'70'}),
+            'affiliation': forms.TextInput(attrs={'size':'70'}),
+            'email': forms.TextInput(attrs={'size':'70'}),
+            'phone': forms.TextInput(attrs={'size':'70'}),
+            'statement': forms.Textarea(attrs={'rows':20, 'cols':70}),
+        }
+        
 class SupporterForm(forms.ModelForm):
     class Meta:
         model = Supporter
-        exclude = ('candidate','web_key','created_date',)
+        exclude = ('statement','candidate','web_key','created_date',)
+        
+        widgets = {
+            'title': forms.TextInput(attrs={'size':'70'}),
+            'name': forms.TextInput(attrs={'size':'70'}),
+            'email': forms.TextInput(attrs={'size':'70'}),
+        }
         
 class AwardForm(forms.ModelForm):
     class Meta:
@@ -65,5 +87,6 @@ class ActivateCommitteeMemberForm(forms.Form):
         if password1 != password2:
             raise forms.ValidationError("Your passwords do not match")
         return password2    
+    
     
     

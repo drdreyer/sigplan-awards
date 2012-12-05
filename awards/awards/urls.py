@@ -14,7 +14,7 @@ urlpatterns = patterns('',
     (r'^add_committee_member/(?P<award_id>\w+)/$', add_committee_member),
     (r'^award_member/(?P<award_id>\w+)/$', award_member),
     (r'^activate_committee_member/(?P<web_key>\w+)/$', activate_committee_member),
-    
+    (r'^make_czar/(?P<award_id>\w+)/(?P<member_id>\w+)/', make_czar),
     
     (r'^accounts/authentication/$', sigplan_authenticate),
     (r'^accounts/logout/$', 'django.contrib.auth.views.logout', {'template_name': 'registration/logout.html'}),

@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h1>Change Czar</h1>
+<p>Are you sure you want to promote <b>{{ member.user.get_full_name }}</b> to Czar of the <b>{{ award.name }}</b>?</p>
+<p>{{ member.user.get_full_name }} will replace you as Czar, and you will be demoted to a Committee Member.</p>
+
+<b><a href="?confirm=true">Confirm</a></b>
+
+{% endblock %}

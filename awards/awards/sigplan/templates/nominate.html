@@ -1,8 +1,24 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h1>Nominate</h1>
-Coming Soon...
+<h1>Nominate someone for a SIGPLAN Award</h1>
+<hr/>
 
+{% for award in awards %}
+<h2>{{ award.name }}</h2>
+<p><pre>{{ award.award_text }}</pre></p>
+<hr/>
+{% endfor %}
+
+<form method="post">
+  {% csrf_token %}
+  <table class="nominate_table">
+    {% for form in forms %}
+      <tr class="section_head"><th colspan="2" height="50">{{ form.form_title }}</th></tr>
+      {{ form.as_table }}
+    {% endfor %}
+  </table>
+  <input type="submit" value="Nominate" />
+</form>
 
 {% endblock %}

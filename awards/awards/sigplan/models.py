@@ -1,4 +1,6 @@
 from django.db import models
+from django import forms
+
 import django.contrib.auth.models as auth_models
 from django.conf import settings
 
@@ -66,13 +68,13 @@ class Candidate(models.Model):
     affiliation = models.CharField(max_length=200)  
     phone = models.CharField(max_length=200)  
     email = models.EmailField(max_length=200)  
-    statement = models.TextField(editable=False)
+    statement = models.TextField(editable=True)
     created_date = models.DateTimeField('Created', auto_now_add=True)
     
 class Supporter(models.Model):
     candidate = models.ForeignKey(Candidate)
-    name = models.CharField(max_length=200)  
     title = models.CharField(max_length=100) # Mr. Dr. Etc  
+    name = models.CharField(max_length=200)  
     email = models.EmailField(max_length=200)  
     statement = models.TextField(editable=False, blank=True)
     web_key = models.CharField(max_length=40, blank=True) # magic link

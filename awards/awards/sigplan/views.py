@@ -236,17 +236,84 @@ def sigplan_authenticate(request):
 def profile(request):
     return HttpResponse("Profile")
 
+@login_required
+def make_czar(request, award_id, member_id):
+    try:
+        award = Award.objects.get(id=award_id)
+        current_czar = Czar.objects.get(award=award,user=request.user)
+        member = CommitteeMember.objects.get(id=member_id)
+        
+        if request.GET.get('confirm', 'false') == 'true':
+
+            CommitteeMember.objects.create(user=request.user,award=award)
+            Czar.objects.create(user=member.user,award=award)
+            
+            current_czar.delete()
+            member.delete()
+            
+            return HttpResponseRedirect('/')
+        
+        return render_to_response('make_czar.html', 
+                              {
+                                'award':award,
+                                'current_czar':current_czar,
+                                'member':member,
+                               },
+                              context_instance=RequestContext(request))
+        
+    except (Award.DoesNotExist, CommitteeMember.DoesNotExist, Czar.DoesNotExist):
+        raise Http404
+    
+    
+
 def nominate(request):
-#    if request.method == 'POST': # If the form has been submitted...
-#        form = NominateForm(request.POST) # A form bound to the POST data
-#        if form.is_valid(): # All validation rules pass
-#            # Process the data in form.cleaned_data
-#            # ...
-#            return HttpResponseRedirect('/thanks/') # Redirect after POST
-#    else:
-#        form = NominateForm() # An unbound form
+    forms = []
+    if request.method == 'POST': # If the form has been submitted...
+        valid = True
+        
+        form = NominatorForm(request.POST, prefix='nominator') 
+        form.form_title = "Your Information"
+        if not form.is_valid(): # All validation rules pass
+            valid = False
+        forms.append(form)
+        
+        form = NominatorForm(request.POST, prefix='candidate') 
+        form.form_title = "Candidate's Information"
+        if not form.is_valid(): # All validation rules pass
+            valid = False
+        forms.append(form)
+        
+        for index in range(1,11):
+            form = SupporterForm(request.POST, prefix='supporter-%s' % index)
+            form.form_title = "Supporter %s" % index
+            if not form.is_valid(): # All validation rules pass
+                if index >= 5:
+                    form.hidden = True
+                valid = False
+            forms.append(form)            
+            
+        if valid:        
+            return HttpResponseRedirect('/thanks/') # Redirect after POST
+    else:
+        form = NominatorForm(prefix='nominator')
+        form.form_title = "Your Information"
+        forms.append(form)
+        
+        form = CandidateForm(prefix='candidate')
+        form.form_title = "Candidate's Information"
+        forms.append(form)
+        
+        for index in range(1,11):
+            form = SupporterForm(prefix='supporter-%s' % index)
+            form.form_title = "Supporter %s" % index
+            if index >= 5:
+                form.hidden = True
+            forms.append(form)            
+            
+    awards = Award.objects.all()
 
     return render(request, 'nominate.html', {
-#        'form': form,
+        'forms': forms,
+        'awards': awards,
     })
         
