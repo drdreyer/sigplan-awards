@@ -3875,6 +3875,11 @@ pre {
 }
 
 .nominate_table th {
-  font-size: 150%;
+  font-size: 120%;
   text-align: right;
+}
+
+.nominate_table .errorlist {
+    margin-bottom: 0;
+    margin-left: -22em;
 }

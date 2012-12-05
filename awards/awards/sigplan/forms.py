@@ -19,7 +19,7 @@ class NominatorForm(forms.ModelForm):
 class CandidateForm(forms.ModelForm):
     class Meta:
         model = Candidate
-        exclude = ('nominator','created_date',)
+        exclude = ('requested','nominator','created_date',)
         
         widgets = {
             'name': forms.TextInput(attrs={'size':'70'}),
@@ -89,4 +89,7 @@ class ActivateCommitteeMemberForm(forms.Form):
         return password2    
     
     
-    
+class SupportStatementForm(forms.Form):
+    statement = forms.CharField( widget=forms.Textarea(attrs={'rows':20, 'cols':70}))
+
+                                  

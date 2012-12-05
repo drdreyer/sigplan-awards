@@ -1,5 +1,23 @@
 {% extends "base.html" %}
 
+{% block extrahead %}
+<script type="text/javascript" src="/static/js/jquery.min.js"></script>
+
+<script>
+$(document).ready(function(){
+
+  $('#add_more_supporters').click(function() {
+    $(this).hide();
+    $('tr').show();
+//    alert('foo');
+  });
+  
+  
+  
+});
+</script>
+{% endblock %}
+
 {% block content %}
 <h1>Nominate someone for a SIGPLAN Award</h1>
 <hr/>
@@ -14,10 +32,13 @@
   {% csrf_token %}
   <table class="nominate_table">
     {% for form in forms %}
-      <tr class="section_head"><th colspan="2" height="50">{{ form.form_title }}</th></tr>
-      {{ form.as_table }}
+      <tr class="section_head"{% if form.hidden %}style="display:none;"{% endif %}><th colspan="3" height="50">{{ form.form_title }}</th></tr>
+      {% for field in form %}        
+        <tr {% if form.hidden %}style="display:none;"{% endif %}><th>{{ field.label_tag }}:</th><td>{{ field }}</td><td>{% if not form.dont_show_errors %}{{ field.errors }}{% endif %}</td></tr>
+      {% endfor %}
     {% endfor %}
   </table>
+  <input id="add_more_supporters" type="button" value="Add More Supporters" /><br/>
   <input type="submit" value="Nominate" />
 </form>
 

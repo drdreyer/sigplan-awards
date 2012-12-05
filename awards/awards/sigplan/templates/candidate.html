@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>{{ candidate.award.name }}</h1>
+<h1>{{ candidate.name }}</h1>
+
+<ul>
+  <li>Affiliation: {{ candidate.affiliation }}</li>
+  <li>Email: <a href="mailto:{{ candidate.email }}">{{ candidate.email }}</a></li>
+  <li>Phone: {{ candidate.phone }}</li>
+  <li>Nominator: {{ candidate.nominator.name }} (<a href="mailto:{{ candidate.nominator.email }}">{{ candidate.nominator.email }}</a>) -- {{ candidate.nominator.affiliation }} -- {% if candidate.nominator.verified %}Email Verified{% else %}Email Not Verified{% endif %}</li>
+</ul>  
+
+<h2>Nominator Statement</h2>
+<pre>{{ candidate.statement }}</pre>
+<hr/>
+
+<h2>Supporters{% if is_czar and can_request_all %} -- <a href="{% url sigplan.views.email_supporters candidate.id %}">Request letters from all who haven't submitted.</a>{% endif %}</h2>
+<ul>
+{% for supporter in supporters %}
+  <li>
+    {% if supporter.title %}{{ supporter.title }} {% endif %}{{ supporter.name }} (<a href="mailto:{{ supporter.email }}">{{ supporter.email }}</a>)
+    {% if supporter.statement %}</li>
+    <pre>{{ supporter.statement }}</pre>
+    {% else %}
+      --
+      {% if is_czar %}
+        {% if supporter.requested %}Statement Requested (<a href="{% url sigplan.views.email_supporter supporter.id %}">Request Again</a>){% else %}<a href="{% url sigplan.views.email_supporter supporter.id %}">Request Statement</a>{% endif %}
+      {% else %}
+        {% if supporter.requested %}Statement Requested{% else %}Statement Not Requested{% endif %}
+      {% endif %}
+      </li>
+    {% endif %}
+{% endfor %}
+</ul>
+{% endblock %}

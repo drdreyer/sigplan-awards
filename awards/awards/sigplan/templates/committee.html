@@ -23,4 +23,13 @@
 </ul>
 {% block add_committee_member %}{% endblock %}
 
+<hr/>
+<h2>Nominations</h2>
+<ul>
+  {% for candidate in candidates %}
+    <li><a href="{% url sigplan.views.candidate candidate.id %}">{{ candidate.name }}</a> nominated by {{ candidate.nominator.name }}</li>
+  {% endfor %}
+</ul>
+
+
 {% endblock %}

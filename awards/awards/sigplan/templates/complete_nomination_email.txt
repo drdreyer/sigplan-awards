@@ -1,0 +1,11 @@
+Dear {{ nominator.name }},
+
+Thank you for nominating {{ candidate.name }} for ACM SIGPLAN's {{ award.name }}.  
+
+Please click this link to complete the nomination process.
+http://{{ site_name }}/complete_nomination/{{ nominator.web_key }}/.
+
+We will notify the supporters after a review of the application.
+
+{{ czar.user.get_full_name }},   
+for the ACM SIGPLAN Executive Committee

@@ -13,6 +13,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.contrib.sites.models import Site
 from django.core.mail import send_mail
+from django.core.urlresolvers import reverse
 from django.http import HttpResponse, HttpResponseServerError, HttpResponseForbidden, HttpResponseRedirect, Http404
 from django.shortcuts import render_to_response, get_object_or_404, render
 from django.template.loader import render_to_string
@@ -80,6 +81,7 @@ def committee_index_helper(request, member, template):
     czars = Czar.objects.filter(award=award)
     members = CommitteeMember.objects.filter(award=award)
     pendings = PendingCommitteeMember.objects.filter(award=award)
+    candidates = Candidate.objects.filter(award=award)
 
     return render(request, template, { 
         'request':request,
@@ -87,6 +89,7 @@ def committee_index_helper(request, member, template):
         'czars':czars,
         'members':members,
         'pendings':pendings,
+        'candidates':candidates,
         })
     
 @login_required
@@ -273,42 +276,68 @@ def nominate(request):
     if request.method == 'POST': # If the form has been submitted...
         valid = True
         
-        form = NominatorForm(request.POST, prefix='nominator') 
-        form.form_title = "Your Information"
-        if not form.is_valid(): # All validation rules pass
-            valid = False
-        forms.append(form)
+        print request.POST.items()
         
-        form = NominatorForm(request.POST, prefix='candidate') 
+        
+        c_form = CandidateForm(request.POST, prefix='candidate') 
+        form = c_form
         form.form_title = "Candidate's Information"
+        print len(form.fields)
+        if not form.is_valid(): # All validation rules pass
+            valid = False
+        print len(form.fields)
+        forms.append(form)
+        
+        n_form = NominatorForm(request.POST, prefix='nominator') 
+        form = n_form
+        form.form_title = "Your Contact Information"
         if not form.is_valid(): # All validation rules pass
             valid = False
         forms.append(form)
-        
+
+        valid_supporter_forms = []        
         for index in range(1,11):
-            form = SupporterForm(request.POST, prefix='supporter-%s' % index)
+            prefix = 'supporter-%s' % index
+            form = SupporterForm(request.POST, prefix=prefix)
             form.form_title = "Supporter %s" % index
-            if not form.is_valid(): # All validation rules pass
-                if index >= 5:
+            
+            if request.POST[prefix+'-name'] or request.POST[prefix+'-email']:
+                if form.is_valid(): # All validation rules pass
+                    valid_supporter_forms.append(form)
+                else:
+                    valid = False
+            else:
+                form.dont_show_errors = True
+                if index > 5:
                     form.hidden = True
-                valid = False
+
             forms.append(form)            
             
-        if valid:        
-            return HttpResponseRedirect('/thanks/') # Redirect after POST
+        if valid:
+            nominator = n_form.save()
+            c_form.instance.nominator = nominator
+            candidate = c_form.save()
+            
+            for s_form in valid_supporter_forms:
+                s_form.instance.candidate = candidate
+                s_form.save()
+                    
+            email_nominator(nominator, candidate)        
+            return HttpResponseRedirect('/thank_nominator/') # Redirect after POST
     else:
-        form = NominatorForm(prefix='nominator')
-        form.form_title = "Your Information"
-        forms.append(form)
-        
         form = CandidateForm(prefix='candidate')
         form.form_title = "Candidate's Information"
+        print len(form.fields)
+        forms.append(form)
+        
+        form = NominatorForm(prefix='nominator')
+        form.form_title = "Your Contact Information"
         forms.append(form)
         
         for index in range(1,11):
             form = SupporterForm(prefix='supporter-%s' % index)
             form.form_title = "Supporter %s" % index
-            if index >= 5:
+            if index > 5:
                 form.hidden = True
             forms.append(form)            
             
@@ -318,4 +347,155 @@ def nominate(request):
         'forms': forms,
         'awards': awards,
     })
+
+def email_nominator(nominator, candidate):
+    award = candidate.award
+    czar = Czar.objects.filter(award=award)[0]
+    
+    message = render_to_string('complete_nomination_email.txt',
+                                   { 'nominator': nominator,
+                                     'candidate': candidate,
+                                     'award': award,
+                                     'czar': czar, 
+                                     'site_name': Site.objects.get_current()
+                                    })
+
+    send_mail('SIGPLAN %s award nomination for %s' % (award.name,candidate.name), message, award.email_title+'<'+award.email+'>',
+        [nominator.name+'<'+nominator.email+'>'], fail_silently=False)
+      
+def thank_nominator(request):
+    return render(request, 'thank_nominator.html')
+
+def complete_nomination(request, web_key):
+    try:
+        nominator = Nominator.objects.get(web_key=web_key)
+        nominator.verified = True
+        nominator.save()
         
+        return render(request, 'thank_nominator2.html')
+    except Nominator.DoesNotExist:
+        raise Http404
+
+@login_required        
+def candidate(request, candidate_id):
+    try:
+        candidate = Candidate.objects.get(id=candidate_id)
+    
+        is_czar = False    
+        is_committee = False
+        try:
+            Czar.objects.get(user__exact=request.user,award=candidate.award)
+            is_czar = True
+        except Czar.DoesNotExist:
+            try:
+                CommitteeMember.objects.get(user__exact=request.user,award=candidate.award)
+                is_committee = True
+            except:
+                raise Http404
+
+
+        if is_czar or is_committee:            
+            supporters = Supporter.objects.filter(candidate=candidate)
+            can_request_all = False
+            
+            for supporter in supporters:
+                if not supporter.statement:
+                    can_request_all = True
+            
+            return render(request, 'candidate.html', {
+                'candidate': candidate,
+                'supporters': supporters,
+                'is_czar': is_czar,
+                'can_request_all': can_request_all,
+            })
+
+    except Candidate.DoesNotExist:
+        raise Http404
+    
+@login_required        
+def email_supporter(request, supporter_id):
+    try:
+        supporter = Supporter.objects.get(id=supporter_id)
+    
+        try:
+            Czar.objects.get(user__exact=request.user,award=supporter.candidate.award)
+            do_email_supporter(supporter)
+            return HttpResponseRedirect('/candidate/%s/' % supporter.candidate.id)
+        except Czar.DoesNotExist:
+            raise Http404
+    except Supporter.DoesNotExist:
+        raise Http404
+
+@login_required        
+def email_supporters(request, candidate_id):
+    try:
+        candidate = Candidate.objects.get(id=candidate_id)
+        
+        try:
+            Czar.objects.get(user__exact=request.user,award=candidate.award)
+
+            supporters = Supporter.objects.filter(candidate=candidate)
+            
+            for supporter in supporters:
+                if not supporter.statement:
+                    do_email_supporter(supporter)
+                
+            return HttpResponseRedirect('/candidate/%s/' % candidate_id)
+        except Czar.DoesNotExist:
+            raise Http404
+    except Candidate.DoesNotExist:
+        raise Http404
+    
+    
+def do_email_supporter(supporter):
+    award = supporter.candidate.award
+    czar = Czar.objects.filter(award=award)[0]
+    
+    message = render_to_string('request_supporter_statement_email.txt',
+                                   { 'supporter': supporter,
+                                     'award': award,
+                                     'czar': czar, 
+                                     'site_name': Site.objects.get_current()
+                                    })
+
+    to_addr = supporter.name+'<'+supporter.email+'>'
+    if supporter.title:
+        to_addr = supporter.title+' '+supporter.name+'<'+supporter.email+'>'
+
+#    print to_addr
+#    print message
+#    return
+
+    send_mail('SIGPLAN %s award nomination for %s' % (award.name,supporter.candidate.name), message, award.email_title+'<'+award.email+'>',
+        [to_addr], fail_silently=False)
+    supporter.requested = True
+    supporter.save()
+    
+
+def support_letter(request, web_key):
+    try:
+        supporter = Supporter.objects.get(web_key=web_key)
+    
+        if request.method == 'POST': # If the form has been submitted...
+            form = SupportStatementForm(request.POST) # A form bound to the POST data
+            
+#            form.instance.award = award
+            if form.is_valid(): # All validation rules pass
+                supporter.statement = form.cleaned_data['statement']
+                supporter.save()
+                return render(request, 'thank_supporter.html')
+        else:
+            form = SupportStatementForm()
+        
+        return render_to_response('support_letter.html', { 
+                'form':form,
+                'supporter':supporter,
+                'award':supporter.candidate.award,
+                'help_email': supporter.candidate.award.email,
+            },context_instance=RequestContext(request))
+        
+    except Supporter.DoesNotExist:
+        raise Http404
+    
+    
+    
