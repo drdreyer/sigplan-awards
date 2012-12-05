@@ -282,10 +282,8 @@ def nominate(request):
         c_form = CandidateForm(request.POST, prefix='candidate') 
         form = c_form
         form.form_title = "Candidate's Information"
-        print len(form.fields)
         if not form.is_valid(): # All validation rules pass
             valid = False
-        print len(form.fields)
         forms.append(form)
         
         n_form = NominatorForm(request.POST, prefix='nominator') 
@@ -327,7 +325,6 @@ def nominate(request):
     else:
         form = CandidateForm(prefix='candidate')
         form.form_title = "Candidate's Information"
-        print len(form.fields)
         forms.append(form)
         
         form = NominatorForm(prefix='nominator')

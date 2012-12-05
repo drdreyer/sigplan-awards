@@ -32,7 +32,7 @@ class CandidateForm(forms.ModelForm):
 class SupporterForm(forms.ModelForm):
     class Meta:
         model = Supporter
-        exclude = ('statement','candidate','web_key','created_date',)
+        exclude = ('statement','requested','candidate','web_key','created_date',)
         
         widgets = {
             'title': forms.TextInput(attrs={'size':'70'}),
