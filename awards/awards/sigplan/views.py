@@ -200,7 +200,7 @@ def email_pending_member(czar, pending):
                                          'award': czar.award,
                                          'czar': czar, 
                                         })
-    send_mail('Welcome to the '+pending.award+' awards committee.', message, czar.award.email_title+'<'+czar.award.email+'>',
+    send_mail('Welcome to the %s awards committee.' % pending.award.name, message, czar.award.email_title+'<'+czar.award.email+'>',
         [pending.name+'<'+pending.email+'>'], fail_silently=False)
     
     
