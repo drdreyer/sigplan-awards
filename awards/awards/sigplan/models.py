@@ -22,6 +22,9 @@ class Czar(models.Model):
     user = models.ForeignKey(auth_models.User)
     award = models.ForeignKey(Award)
     created_date = models.DateTimeField('Created', auto_now_add=True)
+
+    def __unicode__(self):
+        return "%s -- %s" % ( self.user.get_full_name(), self.award.name )
     
 class CommitteeMember(models.Model):
     user = models.ForeignKey(auth_models.User)
@@ -29,7 +32,7 @@ class CommitteeMember(models.Model):
     created_date = models.DateTimeField('Created', auto_now_add=True)
     
     def __unicode__(self):
-        return self.user.get_full_name()
+        return "%s -- %s" % ( self.user.get_full_name(), self.award.name )
     
     
 class PendingCommitteeMember(models.Model):
