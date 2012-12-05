@@ -199,7 +199,9 @@ def email_pending_member(czar, pending):
                                        { 'pcm': pending,
                                          'award': czar.award,
                                          'czar': czar, 
+                                         'site_name': Site.objects.get_current()
                                         })
+    
     send_mail('Welcome to the %s awards committee.' % pending.award.name, message, czar.award.email_title+'<'+czar.award.email+'>',
         [pending.name+'<'+pending.email+'>'], fail_silently=False)
     

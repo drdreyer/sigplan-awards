@@ -2,7 +2,7 @@ Dear {{ pcm.name }},
 
 You have been selected to the awards committee for ACM SIGPLAN's {{ award.name }}.  
 
-Please log in or create an account at: {{ site_name }}/activate_committee_member/{{ pcm.web_key }}/.
+Please log in or create an account at: http://{{ site_name }}/activate_committee_member/{{ pcm.web_key }}/.
 
 {{ czar.user.get_full_name }},   
 for the ACM SIGPLAN Executive Committee
