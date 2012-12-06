@@ -1,7 +1,54 @@
 from django import forms
 from django.contrib.auth.models import User
+from django.utils.safestring import mark_safe
 
 from models import *
+
+
+class TitleInput(forms.TextInput):
+    '''
+    need some magic javascript and styling to make this work:
+.combo-container {
+    position: relative;
+    height: 18px;
+}
+
+.combo-container input {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 999;
+    padding: 0;
+    margin: 0;
+    width: 420px;
+}
+
+.combo-select {
+    position: absolute;
+    top: 0;
+    left: 0;
+    padding: 0;
+    margin: 0;
+    width: 438px;
+}
+
+
+$('.combo-select').change(function() {
+    $(this).siblings('input').val($(this).children("option").filter(":selected").text());
+});
+  
+    '''
+    
+    default_options = ["Mrs.","Mr.","Ms.","Dr.","Prof.",]
+    
+    def render(self, name, value, attrs=None):
+        super_def = super(TitleInput, self).render(name,value,attrs)
+        selecter = u'<select class="combo-select"><option></option>'
+        for option in self.default_options:
+            selecter += u'<option>%s</option>' % option            
+        selecter += u'</select>'
+        return mark_safe(u'<div class="combo-container">%s%s</div>' % (super_def,selecter))
+        
 
 class NominatorForm(forms.ModelForm):
     class Meta:
@@ -35,9 +82,12 @@ class SupporterForm(forms.ModelForm):
         exclude = ('statement','requested','candidate','web_key','created_date',)
         
         widgets = {
-            'title': forms.TextInput(attrs={'size':'70'}),
-            'name': forms.TextInput(attrs={'size':'70'}),
-            'email': forms.TextInput(attrs={'size':'70'}),
+            'title': TitleInput(),
+            'name': forms.TextInput(),
+            'email': forms.TextInput(),
+#            'title': TitleInput(attrs={'size':'70'}),
+#            'name': forms.TextInput(attrs={'size':'70'}),
+#            'email': forms.TextInput(attrs={'size':'70'}),
         }
         
 class AwardForm(forms.ModelForm):

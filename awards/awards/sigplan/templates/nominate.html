@@ -3,16 +3,17 @@
 {% block extrahead %}
 <script type="text/javascript" src="/static/js/jquery.min.js"></script>
 
-<script>
+<script type="text/javascript">
 $(document).ready(function(){
 
   $('#add_more_supporters').click(function() {
     $(this).hide();
     $('tr').show();
-//    alert('foo');
   });
   
-  
+  $('.combo-select').change(function() {
+      $(this).siblings('input').val($(this).children("option").filter(":selected").text());
+  });
   
 });
 </script>

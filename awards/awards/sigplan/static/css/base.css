@@ -3883,3 +3883,32 @@ pre {
     margin-bottom: 0;
     margin-left: -22em;
 }
+
+.nominate_table input {
+  width: 440px;
+}
+
+.combo-container {
+    position: relative;
+    width: 440px;
+    padding: 10px 0;
+    margin: 0;
+}
+
+.combo-container input {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 999;
+    padding: 0;
+    width: 420px;
+}
+
+.combo-select {
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: 0;
+    margin: 0;
+    width: 100%;
+}
