@@ -66,7 +66,7 @@ class NominatorForm(forms.ModelForm):
 class CandidateForm(forms.ModelForm):
     class Meta:
         model = Candidate
-        exclude = ('requested','nominator','created_date',)
+        exclude = ('award','requested','nominator','created_date',)
         
         widgets = {
             'name': forms.TextInput(attrs={'size':'70'}),

@@ -9,6 +9,7 @@ import sha
 
 class Award(models.Model):
     name = models.CharField(max_length=200)
+    short_name = models.CharField(max_length=200, default="award")
     link = models.CharField(max_length=500, blank=True, null=True, verbose_name='Award Description Link')
     email_title = models.CharField(max_length=500, default=settings.DEFAULT_FROM_EMAIL_NAME, blank=True, null=True, verbose_name='From Email Name')
     email = models.EmailField(max_length=200, default=settings.DEFAULT_FROM_EMAIL_ONLY, verbose_name='From Email Address')  

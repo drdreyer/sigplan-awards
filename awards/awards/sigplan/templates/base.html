@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="{{ LANGUAGE_CODE }}" xml:lang="{{ LANGUAGE_CODE }}" {% if LANGUAGE_BIDI %}dir="rtl"{% endif %}>
 <head>
 <title>{% block title %}SIGPLAN Award Nomination System{% endblock %}</title>
-<link rel="stylesheet" type="text/css" href="{% block stylesheet %} /static/css/base.css{% endblock %}" />
+<link rel="stylesheet" type="text/css" href="{% block stylesheet %} /static/css/base.css?ver=2{% endblock %}" />
 
 {% block extrahead %}{% endblock %}
 </head>
@@ -25,8 +25,8 @@
             <div class="primary-menu block" id="primary-menu">
               <div class="primary-menu-inner inner clearfix" id="primary-menu-inner">
                 <ul class="menu sf-menu"><li class="leaf first active-trail"><a class="active" title="Link to the front page." href="/">Home</a></li>
-                  <li class="leaf"><a title="Nominate" href="{% url sigplan.views.nominate %}">Nominate</a></li>
                 {% if user.is_authenticated %}
+                  <li class="leaf"><a title="Manage Awards" href="{% url sigplan.views.manage %}">Manage Awards</a></li>
                   <li class="leaf"><a title="Log Out" href="/accounts/logout/">Log Out</a></li>
                 {% else %}
                   <li class="leaf"><a title="Log In" href="/accounts/login/">Log In</a></li>

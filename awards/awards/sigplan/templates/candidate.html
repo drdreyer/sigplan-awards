@@ -2,13 +2,14 @@
 
 {% block content %}
 <h1>{{ candidate.award.name }}</h1>
-<h1>{{ candidate.name }}</h1>
+<h2>{{ candidate.name }}</h2>
 
 <ul>
   <li>Affiliation: {{ candidate.affiliation }}</li>
   <li>Email: <a href="mailto:{{ candidate.email }}">{{ candidate.email }}</a></li>
   <li>Phone: {{ candidate.phone }}</li>
   <li>Nominator: {{ candidate.nominator.name }} (<a href="mailto:{{ candidate.nominator.email }}">{{ candidate.nominator.email }}</a>) -- {{ candidate.nominator.affiliation }} -- {% if candidate.nominator.verified %}Email Verified{% else %}Email Not Verified{% endif %}</li>
+  <li>Nominated on: {{ candidate.created_date|date:"F d, Y" }}</li>
 </ul>  
 
 <h2>Nominator Statement</h2>

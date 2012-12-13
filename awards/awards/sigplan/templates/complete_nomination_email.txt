@@ -1,11 +1,34 @@
-Dear {{ nominator.name }},
+{% autoescape off %}Dear {{ nominator.name }},
 
 Thank you for nominating {{ candidate.name }} for ACM SIGPLAN's {{ award.name }}.  
 
 Please click this link to complete the nomination process.
 http://{{ site_name }}/complete_nomination/{{ nominator.web_key }}/.
 
+Here is the information that you submitted.  If you would like to change anything please respond to this email with your changes.
+
+Your Information:
+  Name: {{ nominator.name }}
+  Affiliation: {{ nominator.affiliation }}
+  Phone: {{ nominator.phone }}
+  Email: {{ nominator.email }}
+
+Candidates's Information:
+  Name: {{ candidate.name }}
+  Affiliation: {{ candidate.affiliation }}
+  Phone: {{ candidate.phone }}
+  Email: {{ candidate.email }}
+
+Supporters:{% for supporter in supporters %}
+  {% if supporter.title %}{{ supporter.title }} {% endif %}{{ supporter.name }} ({{ supporter.email }}){% endfor %}
+
+Your Statement on behalf of the Candidate:
+
+{{ candidate.statement }}
+
+
+
 We will notify the supporters after a review of the application.
 
 {{ czar.user.get_full_name }},   
-for the ACM SIGPLAN Executive Committee
+for the ACM SIGPLAN Executive Committee{% endautoescape %}

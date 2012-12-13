@@ -2063,6 +2063,11 @@ html.js #block-user-0.fusion-horiz-login #user-login-form label {
 .font-size-13 {
     font-size: 81.25%;
 }
+
+.font-size-13 a {
+    font-size: 115%;
+}
+
 .font-size-14 {
     font-size: 87.5%;
 }
@@ -2331,7 +2336,7 @@ body {
     line-height: 140%;
 }
 h1 {
-    font-size: 160%;
+    font-size: 200%;
 }
 h1, h2 {
     margin: 0 0 0.5em;
@@ -3867,6 +3872,22 @@ pre {
  white-space: -pre-wrap;      /* Opera 4-6 */
  white-space: -o-pre-wrap;    /* Opera 7 */
  word-wrap: break-word;       /* Internet Explorer 5.5+ */
+ font-family: Ariel,Helvetica,Verdana,"Bitstream Vera Sans",sans-serif;
+ font-size: 110%;
+}
+
+.errors {
+  color:red;
+}
+
+.errorlist {
+  color:red;
+}
+
+.nominate_button {
+  padding: 15px;
+  color: red;
+  font-size: 150%;
 }
 
 .nominate_table .section_head th {
@@ -3881,7 +3902,6 @@ pre {
 
 .nominate_table .errorlist {
     margin-bottom: 0;
-    margin-left: -22em;
 }
 
 .nominate_table input {

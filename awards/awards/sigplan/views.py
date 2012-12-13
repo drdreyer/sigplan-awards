@@ -24,21 +24,27 @@ from django.views.decorators.http import require_POST
 from forms import *
 
 def index(request):
+    awards = Award.objects.all()
+    return render(request, 'index.html', { 
+      'awards':awards
+      })
+
+@login_required
+def manage(request):
     if request.user.is_authenticated():
         czars = Czar.objects.filter(user__exact=request.user)
         members = CommitteeMember.objects.filter(user__exact=request.user)
-        
+
         num_committees = len(czars) + len(members)
         if num_committees > 1:
             return multiple_committees(request, czars, members)
-        
+
         if num_committees == 1:
             if len(czars) == 1:
                 return czar_index(request, czars[0])
             if len(members) == 1:
                 return committee_index(request, members[0])
-        
-    return render(request, 'index.html')
+
 
 @login_required
 def multiple_committees(request, czars, members):
@@ -81,7 +87,7 @@ def committee_index_helper(request, member, template):
     czars = Czar.objects.filter(award=award)
     members = CommitteeMember.objects.filter(award=award)
     pendings = PendingCommitteeMember.objects.filter(award=award)
-    candidates = Candidate.objects.filter(award=award)
+    candidates = Candidate.objects.filter(award=award).order_by('-nominator__verified', 'created_date')
 
     return render(request, template, { 
         'request':request,
@@ -271,10 +277,11 @@ def make_czar(request, award_id, member_id):
     
     
 
-def nominate(request):
+def nominate(request, award_name):
+    award = Award.objects.get(short_name=award_name)
     forms = []
+    valid = True
     if request.method == 'POST': # If the form has been submitted...
-        valid = True
         
         print request.POST.items()
         
@@ -299,7 +306,7 @@ def nominate(request):
             form = SupporterForm(request.POST, prefix=prefix)
             form.form_title = "Supporter %s" % index
             
-            if request.POST[prefix+'-name'] or request.POST[prefix+'-email']:
+            if index <= 5 or request.POST[prefix+'-name'] or request.POST[prefix+'-email']:
                 if form.is_valid(): # All validation rules pass
                     valid_supporter_forms.append(form)
                 else:
@@ -312,16 +319,25 @@ def nominate(request):
             forms.append(form)            
             
         if valid:
-            nominator = n_form.save()
-            c_form.instance.nominator = nominator
-            candidate = c_form.save()
+            if "confirm" in request.POST:
+                nominator = n_form.save()
+                c_form.instance.nominator = nominator
+                c_form.instance.award = award
+                candidate = c_form.save()
+
+                for s_form in valid_supporter_forms:
+                    s_form.instance.candidate = candidate
+                    s_form.save()
+
+                email_nominator(nominator, candidate)
+                return HttpResponseRedirect('/thank_nominator/') # Redirect after POST
+
+            if "nominate" in request.POST:
+                return render(request, 'verify_nomination.html', {
+                    'forms': forms,
+                    'award': award,
+                })
             
-            for s_form in valid_supporter_forms:
-                s_form.instance.candidate = candidate
-                s_form.save()
-                    
-            email_nominator(nominator, candidate)        
-            return HttpResponseRedirect('/thank_nominator/') # Redirect after POST
     else:
         form = CandidateForm(prefix='candidate')
         form.form_title = "Candidate's Information"
@@ -338,23 +354,24 @@ def nominate(request):
                 form.hidden = True
             forms.append(form)            
             
-    awards = Award.objects.all()
-
     return render(request, 'nominate.html', {
         'forms': forms,
-        'awards': awards,
+        'award': award,
+        'errors': not valid,
     })
 
 def email_nominator(nominator, candidate):
     award = candidate.award
     czar = Czar.objects.filter(award=award)[0]
-    
+    supporters = Supporter.objects.filter(candidate=candidate)
+ 
     message = render_to_string('complete_nomination_email.txt',
                                    { 'nominator': nominator,
                                      'candidate': candidate,
                                      'award': award,
                                      'czar': czar, 
-                                     'site_name': Site.objects.get_current()
+                                     'supporters': supporters,
+                                     'site_name': Site.objects.get_current(),
                                     })
 
     send_mail('SIGPLAN %s award nomination for %s' % (award.name,candidate.name), message, award.email_title+'<'+award.email+'>',

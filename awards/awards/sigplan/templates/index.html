@@ -1,9 +1,14 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h1>Welcome to the SigPlan Awards Nomination Portal</h1>
+<h1>Welcome to the SIGPLAN Awards Nomination Portal</h1>
 
-<a href="{% url sigplan.views.nominate %}">Nominate a Candidate</a>
-
+{% for award in awards %}
+<hr/>
+<h2>{{ award.name }}</h2>
+<p><pre>{{ award.award_text }}</pre></p>
+<a href="{% url sigplan.views.nominate award.short_name %}">Submit a Nomination for the {{ award.name }}</a>
+{% endfor %}
+<hr/>
 
 {% endblock %}
