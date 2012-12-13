@@ -9,7 +9,9 @@ admin.autodiscover()
 urlpatterns = patterns('',
     (r'^$', index),
     
-    (r'^nominate/', nominate),
+    (r'^nominate/(?P<award_name>\w+)/$', nominate),
+    (r'^manage/$', manage),
+
     (r'^edit_award/(?P<award_id>\w+)/$', edit_award),
     (r'^add_committee_member/(?P<award_id>\w+)/$', add_committee_member),
     (r'^award_member/(?P<award_id>\w+)/$', award_member),

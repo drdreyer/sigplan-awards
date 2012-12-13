@@ -39,6 +39,11 @@ $(document).ready(function(){
   {% if errors %}<h2 class="errors">The nomination is not complete.  There are missing components (see below).</h2>{% endif %}
   <table class="nominate_table">
     {% for form in forms %}
+      {% if form.prefix == "supporter-1" %}
+        <tr height="50"></tr>
+        <tr><td colspan="3" height="50">
+          <p sytle="font-size:120%;">Please provide contact information for 5-10 people who can provide brief statements in support of the candidate.</p></td></tr>
+      {% endif %}
       <tr class="section_head"{% if form.hidden %}style="display:none;"{% endif %}><th colspan="3" height="50">{{ form.form_title }}</th></tr>
       {% for field in form %}        
 	{% if field.label == "Statement" %}
