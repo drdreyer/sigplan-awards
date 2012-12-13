@@ -6,7 +6,7 @@
 
 {% block content %}
 <h1> Log In</h1> <br />
-
+<h2>Accounts are only created by invitation.  You must contact the award czar to create an account.</h2>
 <div class="ff_not_ok" style="display:none">
 <img src="/media/img/logos/firefox-icon.png">
 <br>
@@ -27,8 +27,7 @@
         </table>
         <input type="hidden" name="next" value="{{ next}}" />
       </form>
-      <a href="/accounts/register/" style="float: left;">{% trans "Create Account" %}</a>
-      <a href="/accounts/password/reset/" style="float: right;">{% trans "Forgot Password" %}</a>
+      <a href="/accounts/password/reset/" >{% trans "Forgot Password" %}</a>
     </div>
 
 {% endblock %}

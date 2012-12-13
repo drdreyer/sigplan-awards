@@ -109,8 +109,8 @@ class PendingCommitteeMemberForm(forms.ModelForm):
 class ActivateCommitteeMemberForm(forms.Form):
     first_name = forms.CharField(max_length=100)
     last_name = forms.CharField(max_length=100)
-    username = forms.CharField(max_length=30, min_length=4)
     email = forms.EmailField()
+    username = forms.CharField(max_length=30, min_length=4)
     password = forms.CharField(max_length=16, min_length=6,widget=forms.PasswordInput(render_value=False))
     password_again = forms.CharField(max_length=16, min_length=6,widget=forms.PasswordInput(render_value=False))
     

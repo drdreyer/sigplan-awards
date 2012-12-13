@@ -71,7 +71,7 @@ class Nominator(models.Model):
 class Candidate(models.Model):
     award = models.ForeignKey(Award)
     name = models.CharField(max_length=200)  
-    statement = models.TextField(editable=True)
+    statement = models.TextField(editable=True, help_text="approx. 200-500 words")
     nominator = models.ForeignKey(Nominator)
     affiliation = models.CharField(max_length=200)  
     phone = models.CharField(max_length=200)  
