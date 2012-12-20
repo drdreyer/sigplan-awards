@@ -46,11 +46,11 @@ $(document).ready(function(){
       {% endif %}
       <tr class="section_head"{% if form.hidden %}style="display:none;"{% endif %}><th colspan="3" height="50">{{ form.form_title }}</th></tr>
       {% for field in form %}        
-	{% if field.label == "Statement" %}
+    	{% if field.label == "Statement" or field.label == "System Developers" %}
           {% if field.errors %}
             <tr><th></th><td>{{ field.errors }}</td><td></td></tr>
           {% endif %}
-            <tr><th>{{ field.label_tag }}:<br/><p style="font-size:85%;font-weight:normal;">approx. 200-500 words</p></th><td colspan="2">{{ field }}</td></tr>
+            <tr><th>{{ field.label_tag }}:<br/><p style="font-size:85%;font-weight:normal;">{{ field.help_text }}</p></th><td colspan="2">{{ field }}</td></tr>
         {% else %}
           <tr {% if form.hidden %}style="display:none;"{% endif %}><th width="150px;">{{ field.label_tag }}:</th><td width="400px;">{{ field }}</td><td>{% if not form.dont_show_errors %}{{ field.errors }}{% endif %}</td></tr>
         {% endif %}

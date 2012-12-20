@@ -72,6 +72,7 @@ class Candidate(models.Model):
     award = models.ForeignKey(Award)
     name = models.CharField(max_length=200)  
     statement = models.TextField(editable=True, help_text="approx. 200-500 words")
+    developers = models.TextField(editable=True, verbose_name="System Developers", help_text="name, affiliation, email")   
     nominator = models.ForeignKey(Nominator)
     affiliation = models.CharField(max_length=200)  
     phone = models.CharField(max_length=200)  
@@ -99,4 +100,4 @@ class Supporter(models.Model):
             self.web_key = sha.new(settings.SECRET_HASH+self.email+str(random.random())).hexdigest()
         super(Supporter, self).save(*args, **kwargs)
 
-    
+

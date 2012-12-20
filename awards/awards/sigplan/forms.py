@@ -66,7 +66,7 @@ class NominatorForm(forms.ModelForm):
 class CandidateForm(forms.ModelForm):
     class Meta:
         model = Candidate
-        exclude = ('award','requested','nominator','created_date',)
+        exclude = ('award','requested','developers','nominator','created_date',)
         
         widgets = {
             'name': forms.TextInput(attrs={'size':'70'}),
@@ -75,6 +75,22 @@ class CandidateForm(forms.ModelForm):
             'phone': forms.TextInput(attrs={'size':'70'}),
             'statement': forms.Textarea(attrs={'rows':20, 'cols':70}),
         }
+
+class AwardCandidateForm(forms.ModelForm):
+    class Meta:
+        model = Candidate
+        exclude = ('award','requested','nominator','affiliation','created_date',)
+        
+        widgets = {
+            'name': forms.TextInput(attrs={'size':'70'}),
+            'statement': forms.Textarea(attrs={'rows':20, 'cols':70}),
+            'developers': forms.Textarea(attrs={'rows':20, 'cols':70}),
+            'affiliation': forms.TextInput(attrs={'size':'70'}),
+            'email': forms.TextInput(attrs={'size':'70'}),
+            'phone': forms.TextInput(attrs={'size':'70'}),
+        }
+        
+
         
 class SupporterForm(forms.ModelForm):
     class Meta:
@@ -143,3 +159,15 @@ class SupportStatementForm(forms.Form):
     statement = forms.CharField( widget=forms.Textarea(attrs={'rows':20, 'cols':70}))
 
                                   
+#class SoftwareAwardAdditionalForm(forms.ModelForm):
+#    class Meta:
+#        model = SoftwareAwardAdditional
+#        exclude = ('candidate',)
+#        
+#        widgets = {
+#            'software_title': forms.TextInput(),
+#            'developers': forms.Textarea(attrs={'rows':20, 'cols':70}),
+##            'title': TitleInput(attrs={'size':'70'}),
+##            'name': forms.TextInput(attrs={'size':'70'}),
+##            'email': forms.TextInput(attrs={'size':'70'}),
+#        }

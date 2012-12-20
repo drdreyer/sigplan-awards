@@ -286,12 +286,20 @@ def nominate(request, award_name):
         print request.POST.items()
         
         
-        c_form = CandidateForm(request.POST, prefix='candidate') 
-        form = c_form
-        form.form_title = "Candidate's Information"
-        if not form.is_valid(): # All validation rules pass
-            valid = False
-        forms.append(form)
+        if 'Software' in award.name:
+            c_form = AwardCandidateForm(request.POST, prefix='candidate') 
+            form = c_form
+            form.form_title = "Nominated Software System"
+            if not form.is_valid(): # All validation rules pass
+                valid = False
+            forms.append(form)
+        else:
+            c_form = CandidateForm(request.POST, prefix='candidate') 
+            form = c_form
+            form.form_title = "Candidate's Information"
+            if not form.is_valid(): # All validation rules pass
+                valid = False
+            forms.append(form)
         
         n_form = NominatorForm(request.POST, prefix='nominator') 
         form = n_form
@@ -339,13 +347,18 @@ def nominate(request, award_name):
                 })
             
     else:
-        form = CandidateForm(prefix='candidate')
-        form.form_title = "Candidate's Information"
-        forms.append(form)
+        if 'Software' in award.name:
+            form = AwardCandidateForm(prefix='candidate')
+            form.form_title = "Nominated Software System"
+            forms.append(form)            
+        else:
+            form = CandidateForm(prefix='candidate')
+            form.form_title = "Candidate's Information"
+            forms.append(form)
         
         form = NominatorForm(prefix='nominator')
         form.form_title = "Your Contact Information"
-        forms.append(form)
+        forms.append(form)        
         
         for index in range(1,11):
             form = SupporterForm(prefix='supporter-%s' % index)
@@ -365,7 +378,10 @@ def email_nominator(nominator, candidate):
     czar = Czar.objects.filter(award=award)[0]
     supporters = Supporter.objects.filter(candidate=candidate)
  
-    message = render_to_string('complete_nomination_email.txt',
+    email_txt = 'complete_nomination_email.txt'   
+    if 'Software' in award.name:
+        email_txt = 'software_complete_nomination_email.txt'   
+    message = render_to_string(email_txt,
                                    { 'nominator': nominator,
                                      'candidate': candidate,
                                      'award': award,
@@ -373,6 +389,9 @@ def email_nominator(nominator, candidate):
                                      'supporters': supporters,
                                      'site_name': Site.objects.get_current(),
                                     })
+
+#    print message
+#    return
 
     send_mail('SIGPLAN %s award nomination for %s' % (award.name,candidate.name), message, award.email_title+'<'+award.email+'>',
         [nominator.name+'<'+nominator.email+'>'], fail_silently=False)

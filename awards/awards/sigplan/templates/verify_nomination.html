@@ -14,7 +14,7 @@
         {% if not form.hidden %}
          {% if field.value %}
           <tr><th style="width:100px">{{ field.label_tag }}:</th>
-              <td>{% if field.label == "Statement" %}<pre style="border:1px solid;">{% endif %}{{ field.value }}{% if field.label == "Statement" %}</pre>{% endif %}</td></tr>
+              <td>{% if field.label == "Statement" or field.label == "System Developers" %}<pre style="border:1px solid;">{% endif %}{{ field.value }}{% if field.label == "Statement" %}</pre>{% endif %}</td></tr>
          {% endif %}
         {% endif %}
         <tr style="display:none;"><td>{{ field }}</td></tr>
