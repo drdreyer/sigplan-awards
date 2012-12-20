@@ -17,8 +17,6 @@ Software System Information:
   Name: {{ candidate.name }}
   Developers: 
 {{ candidate.developers }}
-  Phone: {{ candidate.phone }}
-  Email: {{ candidate.email }}
 
 Supporters:{% for supporter in supporters %}
   {% if supporter.title %}{{ supporter.title }} {% endif %}{{ supporter.name }} ({{ supporter.email }}){% endfor %}

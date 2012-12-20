@@ -79,15 +79,13 @@ class CandidateForm(forms.ModelForm):
 class AwardCandidateForm(forms.ModelForm):
     class Meta:
         model = Candidate
-        exclude = ('award','requested','nominator','affiliation','created_date',)
+        exclude = ('award','requested','nominator','affiliation','created_date','email','phone')
         
         widgets = {
             'name': forms.TextInput(attrs={'size':'70'}),
             'statement': forms.Textarea(attrs={'rows':20, 'cols':70}),
             'developers': forms.Textarea(attrs={'rows':20, 'cols':70}),
             'affiliation': forms.TextInput(attrs={'size':'70'}),
-            'email': forms.TextInput(attrs={'size':'70'}),
-            'phone': forms.TextInput(attrs={'size':'70'}),
         }
         
 
